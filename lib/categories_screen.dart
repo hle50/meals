@@ -4,6 +4,8 @@ import './category_item.dart';
 import './dumy_data.dart';
 
 class CategoriesScreen extends StatelessWidget {
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,6 +16,7 @@ class CategoriesScreen extends StatelessWidget {
             .map((catData) => CategoryItem(
                   color: catData.color,
                   title: catData.title,
+                  id: catData.id,
                 ))
             .toList(),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

@@ -1,24 +1,48 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../widgets/meal_item.dart';
 
+import '../widgets/meal_item.dart';
+import '../models/meal.dart';
 import '../dumy_data.dart';
 
-class CategoryMealsScreen extends StatelessWidget {
+class CategoryMealsScreen extends StatefulWidget {
   static const routeName = '/cateogry-meals';
 
-  // final String categoryId;
-  // final String categoryTitle;
-  // const CategoryMealsScreen(this.categoryId, this.categoryTitle);
+  @override
+  _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
+}
+
+class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
+  String categoryTitle;
+  List<Meal> categoryMeal;
+  var _loadedInitData = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_loadedInitData) {
+      final routeArgs =
+          ModalRoute.of(context).settings.arguments as Map<String, String>;
+      categoryTitle = routeArgs['title'];
+      final categoryId = routeArgs['id'];
+      categoryMeal =
+          DUMMY_MEALS.where((x) => x.categories.contains(categoryId)).toList();
+      _loadedInitData = true;
+    }
+    super.didChangeDependencies();
+  }
+
+  void _removeMeal(String mealId) {
+    setState(() {
+      categoryMeal.removeWhere((x) => x.id == mealId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs =
-        ModalRoute.of(context).settings.arguments as Map<String, String>;
-    final categoryTitle = routeArgs['title'];
-    final categoryId = routeArgs['id'];
-    final categoryMeal =
-        DUMMY_MEALS.where((x) => x.categories.contains(categoryId)).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryTitle),
@@ -26,6 +50,8 @@ class CategoryMealsScreen extends StatelessWidget {
       body: ListView.builder(
         itemBuilder: (ctx, idx) {
           return MealItem(
+            removeItem: _removeMeal,
+            id: categoryMeal[idx].id,
             title: categoryMeal[idx].title,
             imageUrl: categoryMeal[idx].imageUrl,
             duration: categoryMeal[idx].duration,
